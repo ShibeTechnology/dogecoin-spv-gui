@@ -6,8 +6,11 @@ const {
     QLabel,
     QFrame,
     QLineEdit,
+    QApplication,
+    QMessageBox,
 } = require("@nodegui/nodegui")
-var QRCode = require('qrcode')
+const QRCode = require('qrcode')
+const notifier = require('node-notifier')
 
 const View = require('../components/view')
 const Nav = require('../components/nav')
@@ -36,7 +39,15 @@ class Receive extends View {
         this.input.setInlineStyle('border : 1px solid silver; border-radius : 6px; margin: 0px 40;')
         this.input.setAlignment(AlignmentFlag.AlignCenter)
         this.input.setDisabled(true)
-        this.input.addEventListener('MouseButtonPress', () => console.log('we should copy!'))
+        this.input.addEventListener('MouseButtonPress', () => {
+            const clipboard = QApplication.clipboard()
+            clipboard.setText(this.input.text())
+
+            notifier.notify({
+                title: 'Deadbrain corp. wallet',
+                message: 'Address copied in your clipboad!',
+            })
+        })
 
         // WARNING LABEL
         const warningLabel = new QLabel()
