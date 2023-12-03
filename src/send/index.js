@@ -1,3 +1,3 @@
-const Send = require('./Send')
+const Send = require('./send')
 
 module.exports = Send

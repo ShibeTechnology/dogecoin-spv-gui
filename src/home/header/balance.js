@@ -2,7 +2,8 @@ const {
     QWidget,
     QBoxLayout,
     QLabel,
-    QSizePolicyPolicy
+    QSizePolicyPolicy,
+    AlignmentFlag
 } = require("@nodegui/nodegui")
 
 
@@ -21,25 +22,30 @@ class Balance extends QWidget {
         
         balanceLabel.setText(balance.toLocaleString('en'))
         balanceLabel.setObjectName('balance-label')
-        balanceLabel.setFixedSize(100, 50)
-        
+        balanceLabel.setAlignment(AlignmentFlag.AlignRight)
+
         denominationLabel.setText('DOGE')
         denominationLabel.setObjectName('denomination-label')
-        denominationLabel.setFixedSize(50, 50)
-        
-        layout.addWidget(balanceLabel)
-        layout.addWidget(denominationLabel)
-        
+        denominationLabel.setAlignment(AlignmentFlag.AlignLeft)
+
+        layout.addWidget(balanceLabel, 0)
+        layout.addWidget(denominationLabel, 0)
+        layout.setContentsMargins(0, 40, 0, 20)
+
         box.addLayout(layout)
         
         this.setLayout(box)
-        this.setSizePolicy(QSizePolicyPolicy.Expanding, QSizePolicyPolicy.Fixed)
         this.setStyleSheet(`
-            #balance { color: white; }
             #balance-label { font-weight: bold; font-size: 20px; }
-            #denomination-label{ font-weight: bold; font-size: 16px; color: #a895a3 }
+            #denomination-label{ font-weight: bold; font-size: 20px; color: #a895a3; }
         `)
-        // balance.setFixedHeight(230)
+
+        // save for updating text later
+        this.balanceLabel = balanceLabel
+    }
+
+    setBalance (balance) {
+        this.balanceLabel.setText(balance.toLocaleString('en'))
     }
 }
 

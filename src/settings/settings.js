@@ -4,9 +4,9 @@ const {
     AlignmentFlag,
     Direction
 } = require("@nodegui/nodegui")
-const View = require('../components/View')
-const Nav = require('../components/Nav')
-const BackButton = require('../components/BackButton')
+const View = require('../components/view')
+const Nav = require('../components/nav')
+const BackButton = require('../components/backButton')
 
 class Settings extends View {
     constructor (viewManager) {

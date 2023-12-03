@@ -1,135 +1,170 @@
-const path = require("path")
-const EventEmitter = require('events')
-const {
-    QApplication,
-    QMainWindow,
-    QMenu,
-    QIcon,
-    QSystemTrayIcon,
-    QAction,
-    QStackedWidget,
-} = require("@nodegui/nodegui")
+const SPVNode = require('dogecoin-spv/spvnode')
+const Wallet = require('dogecoin-spv/wallet')
+const Store = require('dogecoin-spv/store')
+const { getSettings } = require('dogecoin-spv/settings')
+const networks = require('dogecoin-spv/network')
+const { MissingNetworkArg } = require('dogecoin-spv/error')
+const { doubleHash } = require('dogecoin-spv/utils')
+const { KOINU, MIN_FEE } = require('dogecoin-spv/constants')
 
-//Store
-const Store = require('./Store')
+const debug = require('debug')('app')
+const fs = require('fs')
+const path = require('path')
+const process = require('process')
 
-// Screens
-const Home = require('./home')
-const Send = require('./send')
-const Receive = require('./receive')
-const Settings = require('./settings')
+const Win = require('./win')
+const Tray = require('./tray')
+const { QApplication } = require("@nodegui/nodegui")
 
-// icons path
-const icon = "../assets/logo.png"
-const iconWhite = "../assets/logo_white.png"
-
-// Main windows and tray system
-const win = new QMainWindow();
-const trayIcon = new QIcon(path.resolve(__dirname, iconWhite))
-const winIcon = new QIcon(path.resolve(__dirname, icon))
-
-const tray = new QSystemTrayIcon()
-tray.setIcon(trayIcon)
-tray.show();
-tray.setToolTip("grrr...")
-
-const menu = new QMenu()
-tray.setContextMenu(menu)
-
-// -------------------
-// Quit Action
-// -------------------
-const quitAction = new QAction()
-quitAction.setText("Quit")
-quitAction.setIcon(trayIcon)
-quitAction.addEventListener("triggered", () => {
-  const app = QApplication.instance()
-  app.exit(0)
-})
-
-menu.addAction(quitAction)
-
-
-// -------------------
-// Main Window
-// -------------------
-win.setWindowTitle("Deadbrain wallet")
-win.setWindowIcon(winIcon)
-win.setFixedSize(460, 720)
-
-
-// Fake transactions
-let address = 'DJUngfL...vQteJfb'
-let date = 'August 09, 2021'
-
-let transactions = []
-for (let i = 0; i < 20; i++) {
-  let amount = Math.ceil(Math.random() * 100)
-  if (i%2 == 0) {
-    amount = - amount
+async function app (args) {
+  if (typeof args.network !== 'string') {
+    throw new MissingNetworkArg()
   }
 
-  let tx = {
-    address,
-    amount,
-    date,
+  const settings = getSettings(args.network, args.dev)
+
+  // Interface Store (keep track of all the data)
+  const store = new Store()
+
+  // Create data folders for data
+  if (!fs.existsSync(settings.DATA_FOLDER) || !fs.existsSync(path.join(settings.DATA_FOLDER, 'spvnode')) || !fs.existsSync(path.join(settings.DATA_FOLDER, 'wallet'))) {
+    fs.mkdirSync(settings.DATA_FOLDER, { recursive: true })
+    fs.mkdirSync(path.join(settings.DATA_FOLDER, 'spvnode'))
+    fs.mkdirSync(path.join(settings.DATA_FOLDER, 'wallet'))
   }
 
-  transactions.push(tx)
+  const SEED_FILE = path.join(settings.DATA_FOLDER, 'seed.json')
+
+  // Will be needed in the interface
+  const sendTransaction = async (amount, address) => {
+    // TODO: calculate fee properly
+    const fee = MIN_FEE * KOINU
+    const rawTransaction = await wallet.send(amount, address, fee)
+    spvnode.sendRawTransaction(rawTransaction)
+    debug('SENT !')
+    const newBalance = await wallet.getBalance()
+    store.setBalance(newBalance)
+    return doubleHash(rawTransaction).reverse()
+  }
+
+  // Will be needed in the interface
+  const getAddress = async () => { return await wallet.getAddress() }
+
+  // Stopping the app
+  const shutdown = async () => {
+    if (spvnode.isShuttingDown()) {
+      debug('Is already shutting down')
+      return
+    }
+
+    debug('shutting down')
+
+    if (spvnode.isShuttingDown()) { return }
+
+    await spvnode.shutdown()
+
+    const app = QApplication.instance()
+    app.exit(0)
+  }
+
+  // Create interface with nodegui
+  const ui = new Win(store, {getAddress, sendTransaction})
+  const tray = new Tray(shutdown)
+
+  // Do we have seed already ?
+  try {
+    fs.accessSync(SEED_FILE)
+  } catch (err) {
+    const mnemonic = Wallet.generateMnemonic()
+    Wallet.createSeedFile(mnemonic, SEED_FILE)
+    ui.showMnemonicScreen(mnemonic)
+    // TODO: It has to be a better way
+    while (!ui.screen.continue) {
+      await new Promise((resolve, reject) => setTimeout(resolve, 2000))
+    }
+  }
+
+  // Create Wallet
+  const wallet = new Wallet(settings)
+  // get balance
+  wallet.getBalance()
+    .then(function (balance) {
+      store.setBalance(balance)
+    })
+
+  wallet.getPaymentChannels()
+    .then(function (paymentChannels) {
+      debug(paymentChannels)
+      store.setPaymentChannels(paymentChannels)
+    })
+
+  // Initiate wallet
+  await wallet.init()
+  // show main screen
+  ui.showMainScreen()
+
+  wallet.on('balance', function () {
+    debug('BALANCE UPDATED!')
+    wallet.getBalance()
+      .then(function (newBalance) {
+        store.setBalance(newBalance)
+      })
+
+    wallet.getPaymentChannels()
+      .then(function (paymentChannels) {
+        store.setPaymentChannels(paymentChannels)
+      })
+  })
+
+  // always have this after calling wallet.init()
+  wallet.on('updateFilter', async function (element) {
+    debug(`New element to add to filter : ${element}`)
+    await spvnode.updateFilter(element.toString('hex'))
+  })
+
+  const pubkeyHashes = await wallet.getAllpubkeyHashes()
+
+  // Create SPV node
+  const spvnode = new SPVNode(pubkeyHashes, settings)
+
+
+  // REVIEW: instead of relying on event can I just pass the store to the SVP node ?
+  // But it will mean the store and the node are depending on each others... Unless I make it optional
+  // what is better? Emitting events or callback funtcions...
+  spvnode.on('tx', function (tx) {
+    // Register tx to wallet! Maybe it ours... maybe not
+    wallet.addTxToWallet(tx)
+  })
+
+  spvnode.on('synchronized', function (newData) {
+    debug('Our node is synchronized')
+    store.setSPVState(newData)
+  })
+
+  spvnode.on('newState', function (newData) {
+    store.setSPVState(newData)
+  })
+
+  spvnode.on('reject', function (rejectMessage) {
+    debug(rejectMessage)
+    store.setRejectMessage(rejectMessage)
+  })
+
+  // catches ctrl+c event
+  process.on('SIGINT', shutdown)
+
+  // catches SIGTERM events
+  process.on('SIGTERM', shutdown)
+
+  // Add regtest peer
+  if (args.network === networks.REGTEST) {
+    await spvnode.addPeer(settings.NODE_IP, settings.DEFAULT_PORT)
+  }
+
+  await spvnode.start()
+
+  // start synchronizing
+  await spvnode.synchronize()
 }
 
-
-// -------------------
-// Stacked Widget (manage views)
-// -------------------
-const views = new QStackedWidget()
-const viewManager = new EventEmitter()
-const store = new Store({ balance: 10297.88, transactions })
-
-const send = new Send(viewManager, store)
-const receive = new Receive(viewManager, store)
-const home = new Home(viewManager, store)
-const settings = new Settings(viewManager)
-
-views.addWidget(home)
-views.addWidget(send)
-views.addWidget(receive)
-views.addWidget(settings)
-
-views.setCurrentWidget(home)
-
-win.setCentralWidget(views)
-win.setStyleSheet('QPushButton { border: none; }')
-
-
-// Remove system window frame
-//win.setWindowFlag(WindowType.FramelessWindowHint, true)
-
-// View Manager
-viewManager.on('changeView', (view) => {
-    console.log(`change view to ${view}`)
-    switch (view) {
-      case 'send':
-        views.setCurrentIndex(1)
-        break
-      case 'receive':
-        views.setCurrentIndex(2)
-        break
-      case 'home':
-        views.setCurrentIndex(0)
-        break
-      case 'settings':
-        views.setCurrentIndex(3)
-        break
-      default:
-        console.log('unknown view')
-    }
-})
-
-win.show()
-
-const qApp = QApplication.instance()
-qApp.setQuitOnLastWindowClosed(false) // required so that app doesnt close if we close all windows.
-
-global.win = win // To prevent win from being garbage collected.
-global.tray = tray // To prevent system tray from being garbage collected.
+module.exports = app

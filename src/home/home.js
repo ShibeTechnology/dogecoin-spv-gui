@@ -4,7 +4,7 @@ const {
     AlignmentFlag,
 } = require("@nodegui/nodegui")
 
-const History = require('./history/History')
+const History = require('./history/history')
 const Header = require("./header")
 
 class Home extends QWidget {

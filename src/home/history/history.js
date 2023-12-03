@@ -9,7 +9,7 @@ const {
     QPushButton,
 } = require("@nodegui/nodegui")
 
-const TransactionList = require('./TransactionList')
+const TransactionList = require('./transactionList')
 
 class History extends QWidget {
     constructor (store) {
@@ -22,7 +22,7 @@ class History extends QWidget {
         const headerLayout = new QBoxLayout(Direction.TopToBottom) 
         const headerLabel = new QLabel()
         const allTransactionsButton = new QPushButton()
-        let hidden = false
+        let hidden = true
 
         const labels = new QFrame()
         const labelsLayout = new QBoxLayout(Direction.LeftToRight)
@@ -33,7 +33,7 @@ class History extends QWidget {
             font-weight: bold;
         `)
 
-        allTransactionsButton.setText('All transactions ⮟')
+        allTransactionsButton.setText('All transactions ⮝')
         allTransactionsButton.setStyleSheet(`
             color: #8a95a3;
         `)
@@ -51,6 +51,7 @@ class History extends QWidget {
 
         // transaction history list
         const history = new TransactionList(store.transactions)
+        history.hide()
 
         // -------------------
         // History Component Widget
@@ -68,6 +69,7 @@ class History extends QWidget {
             border-top-right-radius: 12px;
         `)
         this.setContentsMargins(20, 0, 0, 20)
+        this.setMaximumHeight(100)
 
         allTransactionsButton.addEventListener('clicked', () => {
             if (hidden) {
