@@ -13,6 +13,7 @@
     "@nodegui/nodegui": "^0.59.0",
     "@nodegui/os-utils": "^1.1.2",
     "debug": "^4.3.4",
+    "dogecoin-spv": "github:ShibeTechnology/dogecoin-spv-node#v0.6.0",
     "node-notifier": "^10.0.1",
     "qrcode": "^1.5.3"
   }

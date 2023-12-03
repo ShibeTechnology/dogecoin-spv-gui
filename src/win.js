@@ -58,7 +58,7 @@ class Win extends QMainWindow {
     const views = new QStackedWidget()
     const viewManager = new EventEmitter()
 
-    const send = new Send(viewManager, store)
+    const send = new Send(viewManager, store, opts.sendTransaction)
     const receive = new Receive(viewManager)
     const home = new Home(viewManager, store)
     const settings = new Settings(viewManager)
