@@ -5,6 +5,7 @@ const {
     QSizePolicyPolicy,
     AlignmentFlag
 } = require("@nodegui/nodegui")
+const { KOINU } = require('dogecoin-spv/constants')
 
 
 // -------------------
@@ -19,8 +20,8 @@ class Balance extends QWidget {
         
         const balanceLabel = new QLabel()
         const denominationLabel = new QLabel()
-        
-        balanceLabel.setText(balance.toLocaleString('en'))
+
+        balanceLabel.setText((balance/KOINU).toLocaleString('en'))
         balanceLabel.setObjectName('balance-label')
         balanceLabel.setAlignment(AlignmentFlag.AlignRight)
 
@@ -45,7 +46,7 @@ class Balance extends QWidget {
     }
 
     setBalance (balance) {
-        this.balanceLabel.setText(balance.toLocaleString('en'))
+        this.balanceLabel.setText((balance/KOINU).toLocaleString('en'))
     }
 }
 

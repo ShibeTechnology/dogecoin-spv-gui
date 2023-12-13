@@ -12,17 +12,19 @@ const {
 const TransactionList = require('./transactionList')
 
 class History extends QWidget {
-    constructor (store) {
+    constructor (store, showAllTxsAndHideProgressBar) {
         super()
+
+        this.store = store
 
         // -------------------
         // History Header Widget
         // -------------------
-        const header = new QWidget()
+        this.header = new QWidget()
         const headerLayout = new QBoxLayout(Direction.TopToBottom) 
         const headerLabel = new QLabel()
-        const allTransactionsButton = new QPushButton()
-        let hidden = true
+        this.allTransactionsButton = new QPushButton()
+        this.hidden = true
 
         const labels = new QFrame()
         const labelsLayout = new QBoxLayout(Direction.LeftToRight)
@@ -33,34 +35,33 @@ class History extends QWidget {
             font-weight: bold;
         `)
 
-        allTransactionsButton.setText('All transactions ⮝')
-        allTransactionsButton.setStyleSheet(`
+        this.allTransactionsButton.setText('All transactions ⮝')
+        this.allTransactionsButton.setStyleSheet(`
             color: #8a95a3;
         `)
 
         labelsLayout.addWidget(headerLabel, 0, AlignmentFlag.AlignLeft)
-        labelsLayout.addWidget(allTransactionsButton, 0, AlignmentFlag.AlignRight)
+        labelsLayout.addWidget(this.allTransactionsButton, 0, AlignmentFlag.AlignRight)
         labels.setLayout(labelsLayout)
 
 
         //headerLayout.addWidget(dividerLabel, 0, AlignmentFlag.AlignHCenter)
         headerLayout.addWidget(labels, 1, AlignmentFlag.AlignTop)
 
-        header.setLayout(headerLayout)
+        this.header.setLayout(headerLayout)
 
 
         // transaction history list
-        const history = new TransactionList(store.transactions)
-        history.hide()
+        this.history = new TransactionList(store.transactions)
+        this.history.hide()
 
         // -------------------
         // History Component Widget
         // -------------------
-        const historySection = new QFrame()
         const layout = new QGridLayout()
 
-        layout.addWidget(header, 0, 0, 1, 0, AlignmentFlag.AlignTop)
-        layout.addWidget(history, 1, 0, 1, 0)
+        layout.addWidget(this.header, 0, 0, 1, 0, AlignmentFlag.AlignTop)
+        layout.addWidget(this.history, 1, 0, 1, 0)
         this.setLayout(layout)
         this.setStyleSheet(`
             background-color: white;
@@ -71,24 +72,30 @@ class History extends QWidget {
         this.setContentsMargins(20, 0, 0, 20)
         this.setMaximumHeight(100)
 
-        allTransactionsButton.addEventListener('clicked', () => {
-            if (hidden) {
-                history.show()
-                this.setMaximumHeight(16777215) // the value come from this.maximumHeight()
-                this.setStyleSheet('background-color: white; color: #131620; border-top-left-radius: 12px; border-top-right-radius: 12px;')
-                header.setStyleSheet('background-color: white;')
-                allTransactionsButton.setText('All transactions ⮟')
-                hidden = false
-            } else {
-                history.hide()
-                this.setMaximumHeight(100)
-                header.setStyleSheet('background-color: white;')
-                allTransactionsButton.setText('All transactions ⮝')
-                hidden = true
-            }
+        // events
+        this.allTransactionsButton.addEventListener('clicked', showAllTxsAndHideProgressBar)
+        this.store.on('changed', this.update)
+    }
 
-        })
+    update = () => {
+        this.history.setTransactions(this.store.transactions)
+    }
 
+    hideTransactions = () => {
+        if (this.hidden) {
+            this.history.show()
+            this.setMaximumHeight(16777215) // the value come from this.maximumHeight()
+            this.setStyleSheet('background-color: white; color: #131620; border-top-left-radius: 12px; border-top-right-radius: 12px;')
+            this.header.setStyleSheet('background-color: white;')
+            this.allTransactionsButton.setText('All transactions ⮟')
+            this.hidden = false
+        } else {
+            this.history.hide()
+            this.setMaximumHeight(100)
+            this.header.setStyleSheet('background-color: white;')
+            this.allTransactionsButton.setText('All transactions ⮝')
+            this.hidden = true
+        }
     }
 
 }

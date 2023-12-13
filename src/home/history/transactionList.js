@@ -7,6 +7,7 @@ const {
     QFrame,
     QLabel,
     QBoxLayout,
+    AlignmentFlag,
 } = require("@nodegui/nodegui")
 
 class TransactionList extends QListWidget {
@@ -24,9 +25,14 @@ class TransactionList extends QListWidget {
             QListWidget::item { border-top: 1px solid #8a95a3; }
         `)
 
-        // -------------------
+        this.setTransactions(transactions)
+    }
+
+    setTransactions (transactions) {
+        // remove precedent items from the list widget
+        this.clear()
+
         // Transaction Items Widget
-        // -------------------
         for (let transaction of transactions) {
             const item = new QListWidgetItem()
 
@@ -41,12 +47,14 @@ class TransactionList extends QListWidget {
             const sign = transaction.amount < 0 ? '-' : '+'
 
             addressLabel.setText(transaction.address)
+            addressLabel.setStyleSheet('font-size: 11px; font-weight: bold;')
 
-            balanceLabel.setText(`${sign} ${Math.abs(transaction.amount)} DOGE`)
-            balanceLabel.setStyleSheet(' font-size: 12px; font-weight: bold; ')
+            balanceLabel.setText(`${sign} ${transaction.amount} DOGE`)
+            balanceLabel.setStyleSheet('font-size: 12px; font-weight: bold;')
+            balanceLabel.setAlignment(AlignmentFlag.AlignRight)
 
-            dateLabel.setText(transaction.date)
-            dateLabel.setStyleSheet(' font-size: 12px; color: #8A95A3; ')
+            dateLabel.setText(transaction.date.slice(0,12) + '...' + transaction.date.slice(52))
+            dateLabel.setStyleSheet('font-size: 12px; color: #8A95A3;')
             
             if (sign === '+') {
                 svgArrow.load('assets/arrow_up.svg')

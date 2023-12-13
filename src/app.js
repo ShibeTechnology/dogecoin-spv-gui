@@ -4,7 +4,7 @@ const Store = require('dogecoin-spv/store')
 const { getSettings } = require('dogecoin-spv/settings')
 const networks = require('dogecoin-spv/network')
 const { MissingNetworkArg } = require('dogecoin-spv/error')
-const { doubleHash } = require('dogecoin-spv/utils')
+const { doubleHash, pubkeyToAddress } = require('dogecoin-spv/utils')
 const { KOINU, MIN_FEE } = require('dogecoin-spv/constants')
 
 const debug = require('debug')('app')
@@ -78,14 +78,30 @@ async function app (args) {
     const mnemonic = Wallet.generateMnemonic()
     Wallet.createSeedFile(mnemonic, SEED_FILE)
     ui.showMnemonicScreen(mnemonic)
-    // TODO: It has to be a better way
-    while (!ui.screen.continue) {
-      await new Promise((resolve, reject) => setTimeout(resolve, 2000))
-    }
   }
 
   // Create Wallet
   const wallet = new Wallet(settings)
+
+  // Get all the transactions history
+  let txs = await wallet.getAllTransactions()
+  let transactions = []
+  for (let t of txs) {
+    t = t.value
+    let amount = BigInt(t.value) / KOINU
+    let address = wallet.pubkeyToAddress(Buffer.from(t.pubkey, 'hex'))
+    let date = t.txid
+
+    let tx = {
+      address,
+      amount,
+      date,
+    }
+
+    transactions.push(tx)
+  }
+  store.setTransactions(transactions)
+
   // get balance
   wallet.getBalance()
     .then(function (balance) {
