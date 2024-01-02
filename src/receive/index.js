@@ -1,3 +1,3 @@
-const Receive = require('./Receive')
+const Receive = require('./receive')
 
 module.exports = Receive

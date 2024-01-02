@@ -13,7 +13,7 @@
    viewBox="0 0 1125.000000 1125.000000"
    preserveAspectRatio="xMidYMid meet"
    id="svg8"
-   sodipodi:docname="logo.svg"
+   sodipodi:docname="logo_white.svg"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
   <defs
      id="defs12" />
@@ -31,12 +31,12 @@
      id="namedview10"
      showgrid="false"
      inkscape:zoom="0.15733333"
-     inkscape:cx="750"
-     inkscape:cy="750"
+     inkscape:cx="-375.00002"
+     inkscape:cy="724.57626"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg8" />
+     inkscape:current-layer="g6" />
   <metadata
      id="metadata2">
 Created by potrace 1.16, written by Peter Selinger 2001-2019
@@ -46,6 +46,7 @@ Created by potrace 1.16, written by Peter Selinger 2001-2019
     <dc:format>image/svg+xml</dc:format>
     <dc:type
        rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
   </cc:Work>
 </rdf:RDF>
 </metadata>
@@ -56,6 +57,7 @@ Created by potrace 1.16, written by Peter Selinger 2001-2019
      id="g6">
     <path
        d="M3308 8703 l-3 -778 -762 -3 -763 -2 0 -2283 0 -2284 167 -6 c91 -4 484 -7 872 -7 634 0 2021 -17 2029 -25 2 -2 6 -348 9 -769 l6 -766 1527 0 1527 0 7 508 c3 279 9 624 12 768 l7 261 261 6 c143 4 489 10 769 13 l507 7 0 754 0 753 -767 -2 -768 -3 -5 -760 -5 -760 -777 -3 -778 -2 0 752 c0 414 -4 759 -8 765 -6 10 -174 13 -763 15 l-754 3 0 775 0 775 762 3 763 2 2 -772 3 -773 767 -3 768 -2 2 772 3 773 778 3 777 2 0 754 0 753 -507 7 c-280 3 -626 9 -769 13 l-261 6 -7 261 c-3 144 -9 489 -12 769 l-7 507 -2303 0 -2304 0 -2 -777z"
-       id="path4" />
+       id="path4"
+       style="fill:#ffffff" />
   </g>
 </svg>
