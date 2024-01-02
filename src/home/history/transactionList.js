@@ -44,7 +44,7 @@ class TransactionList extends QListWidget {
             const dateLabel = new QLabel()
             const svgArrow = new QSvgWidget()
 
-            const sign = transaction.amount < 0 ? '-' : '+'
+            const sign = transaction.amount < 0 ? '' : '+'
 
             addressLabel.setText(transaction.address)
             addressLabel.setStyleSheet('font-size: 11px; font-weight: bold;')

@@ -30,28 +30,6 @@ class Win extends QMainWindow {
     this.setWindowIcon(winIcon)
     this.setFixedSize(460, 720)
 
-
-    // // Fake transactions
-    // let address = 'DJUngfL...vQteJfb'
-    // let date = 'August 09, 2021'
-
-    // let transactions = []
-    // for (let i = 0; i < 20; i++) {
-    //   let amount = Math.ceil(Math.random() * 100)
-    //   if (i%2 == 0) {
-    //     amount = - amount
-    //   }
-
-    //   let tx = {
-    //     address,
-    //     amount,
-    //     date,
-    //   }
-
-    //   transactions.push(tx)
-    // }
-
-
     // -------------------
     // Stacked Widget (manage views)
     // -------------------

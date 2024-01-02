@@ -4,7 +4,7 @@ const Store = require('dogecoin-spv/store')
 const { getSettings } = require('dogecoin-spv/settings')
 const networks = require('dogecoin-spv/network')
 const { MissingNetworkArg } = require('dogecoin-spv/error')
-const { doubleHash, pubkeyToAddress } = require('dogecoin-spv/utils')
+const { doubleHash } = require('dogecoin-spv/utils')
 const { KOINU, MIN_FEE } = require('dogecoin-spv/constants')
 
 const debug = require('debug')('app')
@@ -67,6 +67,47 @@ async function app (args) {
     app.exit(0)
   }
 
+  const getHistory = async () => {
+    // Get all the transactions history
+    let txs = await wallet.getAllTransactions()
+    let transactions = new Map()
+    for (let t of txs) {
+      const utxo = t.value.utxo
+      let amount = BigInt(utxo.value) / KOINU
+      let address = wallet.pubkeyToAddress(Buffer.from(utxo.pubkey, 'hex'))
+      let date = utxo.txid
+
+      let tx = {
+        address,
+        amount,
+        date,
+      }
+
+      transactions.set(utxo.txid,tx)
+
+      if (t.value.txin) {
+        const txin = t.value.txin
+        let transaction = await wallet.db.getTx(txin.txid)
+
+        // TODO: This is a shortcut because we are assuming the second utxo is the change one.
+        // TODO: check if Fee is actually the MIN_FEE (we took a shortcut here)
+        let amount = - BigInt(transaction.txOuts[0].value) / KOINU - MIN_FEE
+        let address = wallet.pubkeyToAddress(Wallet.extractPubkeyHashFromP2PKH(Buffer.from(transaction.txOuts[0].pkScript)), true)
+        let date = txin.txid
+
+        let tx = {
+          address,
+          amount,
+          date,
+        }
+
+        transactions.set(txin.txid, tx)
+      }
+
+    }
+    store.setTransactions(Array.from(transactions.values()))
+  }
+
   // Create interface with nodegui
   const ui = new Win(store, {getAddress, sendTransaction})
   const tray = new Tray(shutdown)
@@ -83,24 +124,8 @@ async function app (args) {
   // Create Wallet
   const wallet = new Wallet(settings)
 
-  // Get all the transactions history
-  let txs = await wallet.getAllTransactions()
-  let transactions = []
-  for (let t of txs) {
-    t = t.value
-    let amount = BigInt(t.value) / KOINU
-    let address = wallet.pubkeyToAddress(Buffer.from(t.pubkey, 'hex'))
-    let date = t.txid
-
-    let tx = {
-      address,
-      amount,
-      date,
-    }
-
-    transactions.push(tx)
-  }
-  store.setTransactions(transactions)
+  // set history in store
+  getHistory()
 
   // get balance
   wallet.getBalance()
@@ -147,9 +172,11 @@ async function app (args) {
   // REVIEW: instead of relying on event can I just pass the store to the SVP node ?
   // But it will mean the store and the node are depending on each others... Unless I make it optional
   // what is better? Emitting events or callback funtcions...
-  spvnode.on('tx', function (tx) {
+  spvnode.on('tx', async function (tx) {
     // Register tx to wallet! Maybe it ours... maybe not
-    wallet.addTxToWallet(tx)
+    await wallet.addTxToWallet(tx)
+    // We store the transactions again the store
+    getHistory()
   })
 
   spvnode.on('synchronized', function (newData) {

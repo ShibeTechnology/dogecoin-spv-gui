@@ -15,7 +15,7 @@ class Input extends QWidget {
     constructor (buttonText, placeholderText) {
         super()
 
-        const input = new QLineEdit()
+        this.input = new QLineEdit()
         const inputLayout = new QBoxLayout(Direction.LeftToRight)
 
         const button = new QPushButton()
@@ -25,16 +25,20 @@ class Input extends QWidget {
         button.setInlineStyle('margin: 25px 40px 20px 0px;')
         button.setFixedHeight(80)
 
-        input.setFixedHeight(80)
-        input.setInlineStyle('border : none; margin: 25px 0px 20px 40px;')
-        input.setPlaceholderText(placeholderText)
+        this.input.setFixedHeight(80)
+        this.input.setInlineStyle('border : none; margin: 25px 0px 20px 40px;')
+        this.input.setPlaceholderText(placeholderText)
 
-        inputLayout.addWidget(input)
+        inputLayout.addWidget(this.input)
         inputLayout.setSpacing(0)
         inputLayout.addWidget(button)
 
         this.setLayout(inputLayout)
         this.setInlineStyle('border : 1px solid silver; border-radius : 6px; margin: 25px 40px 20px 40px;')
+    }
+
+    text () {
+        return this.input.text()
     }
 }
 
