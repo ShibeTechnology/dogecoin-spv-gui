@@ -2,9 +2,9 @@
   "name": "nodegui-experiment",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "qode src/app.js",
+    "start": "qode src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -12,6 +12,9 @@
   "dependencies": {
     "@nodegui/nodegui": "^0.59.0",
     "@nodegui/os-utils": "^1.1.2",
+    "debug": "^4.3.4",
+    "dogecoin-spv": "github:ShibeTechnology/dogecoin-spv-node#v0.6.0",
+    "node-notifier": "^10.0.1",
     "qrcode": "^1.5.3"
   }
 }

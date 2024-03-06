@@ -1,3 +1,3 @@
-const Settings = require('./Settings')
+const Settings = require('./settings')
 
 module.exports = Settings

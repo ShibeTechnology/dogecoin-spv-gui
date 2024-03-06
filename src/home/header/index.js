@@ -6,9 +6,10 @@ const {
     QGridLayout,
 } = require("@nodegui/nodegui")
 
-const Balance = require('./Balance')
-const Button = require('./Button')
-const Nav = require('../../components/Nav')
+const Balance = require('./balance')
+const Button = require('./button')
+const Nav = require('../../components/nav')
+const ProgressBar = require("./progressBar")
 
 // -------------------
 // Header Widget
@@ -35,12 +36,30 @@ class Header extends QWidget {
         const balance = new Balance(store.balance)
         const nav = new Nav(buttonSettings, 'Deadbrain Corp.')
 
+        // Progress bar
+        this.progressBar = new ProgressBar({height: 0, bestHeight: 0, merkleHeight: 0})
+
+
         layout.addWidget(nav, 0, 0, 1, 4)
-        layout.addWidget(balance, 1, 0, 1, 4)
+        layout.addWidget(balance, 1, 0, 1, 0, 4) // 4 AlignHCenter
         layout.addWidget(send, 2, 1, 1, 1, 4) // 4 AlignHCenter
         layout.addWidget(receive, 2, 2, 1, 1, 4) // 4 AlignHCenter
-        
+        layout.addWidget(this.progressBar, 4, 0, 4, 0)
+
         this.setLayout(layout)
+
+        store.on('changed', () => {
+            balance.setBalance(store.balance)
+            this.progressBar.setProgress({ state: store.state, height: store.height, bestHeight: store.bestHeight, merkleHeight: store.merkleHeight })
+        })
+    }
+
+    revealProgressBar () {
+        if (this.progressBar.isVisible()) {
+            this.progressBar.hide()
+        } else {
+            this.progressBar.show()
+        }
     }
 }
 

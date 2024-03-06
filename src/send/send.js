@@ -12,23 +12,24 @@ const {
     QSizePolicyPolicyFlag,
     QFrame,
 } = require("@nodegui/nodegui")
+const { KOINU } = require('dogecoin-spv/constants')
 
-const View = require('../components/View')
-const Nav = require('../components/Nav')
-const BackButton = require('../components/BackButton')
-const Input = require('./Input')
+const View = require('../components/view')
+const Nav = require('../components/nav')
+const BackButton = require('../components/backButton')
+const Input = require('./input')
 
 class Send extends View {
-    constructor (viewManager) {
+    constructor (viewManager, store, sendTransaction) {
         super()
 
+        this.inputAddress = new Input('PASTE', 'Address')
+        this.inputAmount = new Input('MAX', 'Amount')
+        this.sendTransaction = sendTransaction
+    
         const layout = new QBoxLayout(Direction.TopToBottom)
         const buttonBack = new BackButton(viewManager)
         const nav = new Nav(buttonBack, 'Send DOGE')
-
-        // Create input address
-        const inputAddress = new Input('PASTE', 'Address')
-        const inputAmount = new Input('MAX', 'Amount')
 
         // Create Send button
         const frameSend = new QFrame()
@@ -36,7 +37,7 @@ class Send extends View {
         const layoutSend = new QBoxLayout(Direction.LeftToRight)
 
         buttonSend.setText('Send')
-        buttonSend.addEventListener('clicked', () => console.log('Send clicked'))
+        buttonSend.addEventListener('clicked', this.send)
         buttonSend.setInlineStyle('background-color: white; border-radius: 30%; color: #131620;')
         buttonSend.setFixedSize(120, 60)
 
@@ -44,11 +45,20 @@ class Send extends View {
         frameSend.setLayout(layoutSend)
 
         layout.addWidget(nav, 1, AlignmentFlag.AlignTop)
-        layout.addWidget(inputAddress, 1, AlignmentFlag.AlignTop)
-        layout.addWidget(inputAmount, 6, AlignmentFlag.AlignTop)
+        layout.addWidget(this.inputAddress, 1, AlignmentFlag.AlignTop)
+        layout.addWidget(this.inputAmount, 6, AlignmentFlag.AlignTop)
         layout.addWidget(frameSend, 14, AlignmentFlag.AlignTop)
 
         this.setLayout(layout)
+    }
+
+    send = async () => {
+        const address = this.inputAddress.text()
+        const amount = BigInt(this.inputAmount.text()) * KOINU
+
+        const hash = await this.sendTransaction(amount, address)
+
+        console.log(hash.toString('hex'))
     }
 }
 

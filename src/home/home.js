@@ -4,7 +4,7 @@ const {
     AlignmentFlag,
 } = require("@nodegui/nodegui")
 
-const History = require('./history/History')
+const History = require('./history/history')
 const Header = require("./header")
 
 class Home extends QWidget {
@@ -13,8 +13,14 @@ class Home extends QWidget {
         
         const layout = new QGridLayout()
 
+        // TODO: we could do this better
+        const showAllTxsAndHideProgressBar = () => {
+            header.revealProgressBar()
+            history.hideTransactions()
+        }
+
         const header = new Header(viewManager, store)
-        const history = new History(store)
+        const history = new History(store, showAllTxsAndHideProgressBar)
 
         layout.addWidget(header, 0, 0, 1, 0, AlignmentFlag.AlignTop)
         layout.addWidget(history, 1, 0, 1, 0)
