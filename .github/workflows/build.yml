@@ -19,8 +19,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Install dependencies
-        run: sudo apt-get install fuse libfuse2
+      - name: Install linux dependencies
+        run: sudo apt-get install fuse libfuse2 libopengl0
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
