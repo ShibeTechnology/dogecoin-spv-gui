@@ -29,6 +29,9 @@ jobs:
       # - name: Set version
       #   run: |
       #     npm version --no-git-tag-version from-git
+      - name: Apply packer patch (upgrade linuxqtdeploy to continuous)
+        run: |
+          npm run patch
       - name: Build application
         run: |
           npm run build

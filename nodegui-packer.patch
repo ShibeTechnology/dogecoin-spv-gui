@@ -1,0 +1,11 @@
+--- node_modules/@nodegui/packer/scripts/setupBinaries.js	2024-03-15 12:33:34.894997626 +0100
++++ node_modules/@nodegui/packer/scripts/setupBinariesPatch.js	2024-03-15 12:42:41.200679857 +0100
+@@ -13,7 +13,7 @@
+   const artifacts = [
+     {
+       name: "Linux deploy Qt",
+-      link: `https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage`,
++      link: `https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage`,
+       outPath: linuxDeployQtBinary,
+       postSetup: async () => {
+         console.log("Setting up permissions for linuxdeployqt");

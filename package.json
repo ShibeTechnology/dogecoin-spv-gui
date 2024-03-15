@@ -7,6 +7,7 @@
     "start": "qode --inspect src/main.js",
     "build": "webpack --config webpack.config.js",
     "package": "rm -rf deploy/linux/build/ && nodegui-packer --pack dist",
+    "patch": "cd node_modules/@nodegui/packer && patch scripts/setupBinaries.js ../../../nodegui-packer.patch && rm deps/linuxdeployqt && npm run postinstall",
     "test": "echo \"No test. Only talent. \" && exit 0"
   },
   "author": "",
