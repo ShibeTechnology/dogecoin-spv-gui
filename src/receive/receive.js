@@ -53,6 +53,7 @@ class Receive extends View {
         const warningLabel = new QLabel()
         warningLabel.setText('Send only Dogecoin (DOGE) to this address')
         warningLabel.setAlignment(AlignmentFlag.AlignCenter)
+        warningLabel.setInlineStyle('color: white')
 
         layout.addWidget(nav, 0, AlignmentFlag.AlignTop)
         layout.addWidget(imageFrame, 1, AlignmentFlag.AlignTop)

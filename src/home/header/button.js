@@ -21,6 +21,7 @@ class Button extends QWidget {
         button.addEventListener('clicked', clickedFunc)
 
         label.setText(labelText)
+        label.setInlineStyle('color: white')
 
         layout.addWidget(button)
         layout.addWidget(label)

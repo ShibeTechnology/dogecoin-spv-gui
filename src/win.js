@@ -14,7 +14,7 @@ const Receive = require('./receive')
 const Settings = require('./settings')
 
 // icons path
-const icon = "../assets/logo.png"
+const icon = typeof __webpack_require__ === 'function' ? "./assets/logo.png" : "../assets/logo.png"
 
 class Win extends QMainWindow {
   constructor (store, opts) {

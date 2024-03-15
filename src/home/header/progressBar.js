@@ -17,7 +17,7 @@ class ProgressBar extends QWidget {
         // progress info
         this.progressInfo = new QLabel()
         this.progressInfo.setText(`${sync.height}/${sync.bestHeight}`)
-        this.progressInfo.setInlineStyle('font-size: 14px;')
+        this.progressInfo.setInlineStyle('font-size: 14px; color: white;')
 
         // progress bar widget
         this.progressBar = new QProgressBar()
@@ -29,11 +29,12 @@ class ProgressBar extends QWidget {
             margin-right: 80px;
             border-radius: 4px;
             background: white;
-            height: 6px;
+            height: 8px;
         }
         QProgressBar::chunk {
             background-color: #ffe199;
             border-radius: 4px;
+            height: 8px;
         }`)
 
         this.progressBar.setTextVisible(false)

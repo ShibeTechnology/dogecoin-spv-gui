@@ -4,11 +4,13 @@ const {
     QSize,
 } = require("@nodegui/nodegui")
 
+const arrowLeft = typeof __webpack_require__ === 'function' ? "dist/assets/arrow_left_white.svg" : "./assets/arrow_left_white.svg"
+
 class BackButton extends QPushButton {
     constructor (viewManager) {
         super()
 
-        const iconArrow = new QIcon('./assets/arrow_left_white.svg')
+        const iconArrow = new QIcon(arrowLeft)
 
         this.setIcon(iconArrow)
         this.setIconSize(new QSize(30,30))
