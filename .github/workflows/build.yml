@@ -38,12 +38,8 @@ jobs:
           npm run package
         env:
           VERSION: ${{ github.ref_name }}
-      # - name: Upload release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.release.outputs.upload_url }}
-      #     asset_path: ./${{ matrix.asset_name }}.tar.gz
-      #     asset_name: ${{ matrix.asset_name }}.tar.gz
-      #     asset_content_type: application/gzip 
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+          path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
