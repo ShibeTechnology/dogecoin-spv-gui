@@ -7,6 +7,7 @@ const {
     QSize,
 } = require("@nodegui/nodegui")
 
+const moonIcon = typeof __webpack_require__ === 'function' ? "dist/assets/moon_white.svg" : "./assets/moon_white.svg"
 
 class Nav extends QWidget {
     constructor (leftWidget, middleLabelText) {
@@ -17,10 +18,11 @@ class Nav extends QWidget {
         // Deadbrain Label
         const label = new QLabel()
         label.setText(middleLabelText)
+        label.setInlineStyle('color: white')
 
         
         // Moon icon
-        const iconMoon = new QIcon('./assets/moon_white.svg')
+        const iconMoon = new QIcon(moonIcon)
         const buttonMoon = new QPushButton()
 
         buttonMoon.setIcon(iconMoon)

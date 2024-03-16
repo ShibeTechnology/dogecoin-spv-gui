@@ -7,7 +7,7 @@ const {
 } = require("@nodegui/nodegui")
 const path = require("path")
 
-const iconWhite = "../assets/logo_white.png"
+const iconWhite = typeof __webpack_require__ === 'function' ? "./assets/logo_white.png" : "../assets/logo_white.png"
 
 class Tray extends QSystemTrayIcon {
   constructor(shutdown) {

@@ -1,3 +1,5 @@
 node_modules
 data
-./assets/newqrcode.png
+assets/newqrcode.png
+deploy/*/build
+dist

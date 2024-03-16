@@ -22,11 +22,11 @@ class Input extends QWidget {
 
         button.setText(buttonText)
         button.addEventListener('clicked', () => console.log('Paste clicked'))
-        button.setInlineStyle('margin: 25px 40px 20px 0px;')
+        button.setInlineStyle('margin: 25px 40px 20px 0px; color: white;')
         button.setFixedHeight(80)
 
         this.input.setFixedHeight(80)
-        this.input.setInlineStyle('border : none; margin: 25px 0px 20px 40px;')
+        this.input.setInlineStyle('border : none; margin: 25px 0px 20px 40px; color: white;')
         this.input.setPlaceholderText(placeholderText)
 
         inputLayout.addWidget(this.input)

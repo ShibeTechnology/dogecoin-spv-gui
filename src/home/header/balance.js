@@ -37,7 +37,7 @@ class Balance extends QWidget {
         
         this.setLayout(box)
         this.setStyleSheet(`
-            #balance-label { font-weight: bold; font-size: 20px; }
+            #balance-label { font-weight: bold; font-size: 20px; color: white; }
             #denomination-label{ font-weight: bold; font-size: 20px; color: #a895a3; }
         `)
 

@@ -11,6 +11,10 @@ const Button = require('./button')
 const Nav = require('../../components/nav')
 const ProgressBar = require("./progressBar")
 
+const arrowUp = typeof __webpack_require__ === 'function' ? 'dist/assets/arrow_up_white.svg' : 'assets/arrow_up_white.svg'
+const arrowDown = typeof __webpack_require__ === 'function' ? 'dist/assets/arrow_down_white.svg' : 'assets/arrow_down_white.svg'
+const settingsIcon = typeof __webpack_require__ === 'function' ? 'dist/assets/settings_white.svg' : 'assets/settings_white.svg'
+
 // -------------------
 // Header Widget
 // -------------------
@@ -21,11 +25,11 @@ class Header extends QWidget {
         const layout = new QGridLayout()
         
         // Buttons        
-        const send = new Button('Send', 'assets/arrow_up_white.svg', (checked)=>viewManager.emit('changeView', 'send'))
-        const receive = new Button('Receive', 'assets/arrow_down_white.svg', (checked)=>viewManager.emit('changeView', 'receive'))
+        const send = new Button('Send', arrowUp, (checked)=>viewManager.emit('changeView', 'send'))
+        const receive = new Button('Receive', arrowDown, (checked)=>viewManager.emit('changeView', 'receive'))
         
         // Settings button
-        const iconSettings = new QIcon('./assets/settings_white.svg')
+        const iconSettings = new QIcon(settingsIcon)
         const buttonSettings = new QPushButton()
 
         buttonSettings.setIcon(iconSettings)

@@ -1,0 +1,64 @@
+name: "Build App"
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build application 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Install linux dependencies
+        run: sudo apt-get install fuse libfuse2 libopengl0 libegl1 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          npm install
+      # - name: Set version
+      #   run: |
+      #     npm version --no-git-tag-version from-git
+      - name: Apply packer patch (upgrade linuxqtdeploy to continuous)
+        run: |
+          npm run patch
+      - name: Build application
+        run: |
+          npm run build
+      - name: Package application
+        run: |
+          echo $VERSION
+          npm run package
+        env:
+          VERSION: ${{ github.ref_name }}
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+          path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+
+  release:
+    name: Create release with assets
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - name: Download artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+      - run: ls
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          files: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+          draft: true
+          generate_release_notes: true

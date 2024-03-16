@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=DeadbrainWallet
+GenericName=Dogecoin Wallet
+Exec=AppRun %F
+Icon=default
+Comment=Dogecoin SPV wallet
+Terminal=false
+Categories=Utility;
