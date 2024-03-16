@@ -1,12 +1,9 @@
 name: "Create releases"
 
-# on:
-#   push:
-#     tags:
-#       - '*'
-
 on:
-  push
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -36,4 +33,17 @@ jobs:
         run: |
           npm run build
       - name: Package application
-        run: npm run package
+        run: |
+          echo $VERSION
+          npm run package
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+      # - name: Upload release
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.release.outputs.upload_url }}
+      #     asset_path: ./${{ matrix.asset_name }}.tar.gz
+      #     asset_name: ${{ matrix.asset_name }}.tar.gz
+      #     asset_content_type: application/gzip 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Deadbrain Wallet
+Name=DeadbrainWallet
 GenericName=Dogecoin Wallet
 Exec=AppRun %F
 Icon=default
