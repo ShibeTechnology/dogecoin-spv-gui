@@ -37,7 +37,7 @@ jobs:
           echo $VERSION
           npm run package
         env:
-          VERSION: ${{ github.event.release.tag_name }}
+          VERSION: ${{ github.ref_name }}
       # - name: Upload release
       #   uses: actions/upload-release-asset@v1
       #   env:
