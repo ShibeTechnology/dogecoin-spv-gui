@@ -43,3 +43,21 @@ jobs:
         with:
           name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
           path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+
+  release:
+    name: Create release with assets
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - name: Download artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+      - run: ls
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+          draft: true
+          generate_release_notes: true
