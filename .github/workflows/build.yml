@@ -43,7 +43,8 @@ jobs:
           echo $VERSION
           npm run package
         env:
-          VERSION: ${{ github.ref_name }}
+          # VERSION: ${{ github.ref_name }}
+          VERSION: 0.0.0
       - name: Upload artefact
         if: matrix.os =='ubuntu-20.04'
         uses: actions/upload-artifact@v4
