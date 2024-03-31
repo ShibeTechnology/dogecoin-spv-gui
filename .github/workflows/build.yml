@@ -1,12 +1,9 @@
 name: "Build App"
 
-# on:
-#   push:
-#     tags:
-#       - '*'
-
 on:
   push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -43,21 +40,18 @@ jobs:
           echo $VERSION
           npm run package
         env:
-          # VERSION: ${{ github.ref_name }}
-          VERSION: v0.0.0
+          VERSION: ${{ github.ref_name }}
       - name: Upload artefact
         if: matrix.os =='ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
-          # name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
-          # path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
-          name: DeadbrainWallet-v0.0.0-x86_64.AppImage
-          path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-v0.0.0-x86_64.AppImage
+          name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+          path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
       - name: Upload artefact
         if: matrix.os =='windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: DeadbrainWallet-v0.0.0
+          name: DeadbrainWallet--${{ github.ref_name }}
           path: deploy\win32\build\DeadbrainWallet
 
   release:
