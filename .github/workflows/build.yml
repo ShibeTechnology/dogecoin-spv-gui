@@ -1,9 +1,12 @@
 name: "Build App"
 
+# on:
+#   push:
+#     tags:
+#       - '*'
+
 on:
   push:
-    tags:
-      - '*'
 
 jobs:
   build:
@@ -13,10 +16,12 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
+          - os: windows-latest
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Install linux dependencies
+        if: matrix.os =='ubuntu-20.04'
         run: sudo apt-get install fuse libfuse2 libopengl0 libegl1 libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,6 +32,7 @@ jobs:
       #   run: |
       #     npm version --no-git-tag-version from-git
       - name: Apply packer patch (upgrade linuxqtdeploy to continuous)
+        if: matrix.os =='ubuntu-20.04'
         run: |
           npm run patch
       - name: Build application
@@ -39,6 +45,7 @@ jobs:
         env:
           VERSION: ${{ github.ref_name }}
       - name: Upload artefact
+        if: matrix.os =='ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
           name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
