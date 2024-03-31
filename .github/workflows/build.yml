@@ -44,13 +44,19 @@ jobs:
           npm run package
         env:
           # VERSION: ${{ github.ref_name }}
-          VERSION: 0.0.0
+          VERSION: v0.0.0
       - name: Upload artefact
         if: matrix.os =='ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
           name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
           path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+      - name: Upload artefact
+        if: matrix.os =='windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeadbrainWallet-v0.0.0
+          path: deploy\win32\build\DeadbrainWallet
 
   release:
     name: Create release with assets
