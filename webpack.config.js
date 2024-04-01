@@ -22,7 +22,8 @@ module.exports = {
       patterns: [
         { from: 'assets', to: 'assets' },
         // the prebuilds for leveldb and secp256k1
-        { from: 'node_modules/leveldown/prebuilds/linux-x64/', to: 'prebuilds/linux-x64/'}
+        { from: 'node_modules/leveldown/prebuilds/linux-x64/', to: 'prebuilds/linux-x64/'},
+        { from: 'node_modules/leveldown/prebuilds/win32-x64/', to: 'prebuilds/win32-x64/'}
       ],
     }),
   ],
