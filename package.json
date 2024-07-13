@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "qode --inspect src/main.js",
+    "dev": "nodemon -e js --ignore dist/ --ignore node_modules/ --exec npm start",
     "build": "webpack --config webpack.config.js",
     "package": "nodegui-packer --pack dist",
     "patch": "cd node_modules/@nodegui/packer && patch scripts/setupBinaries.js ../../../nodegui-packer.patch && rm deps/linuxdeployqt && npm run postinstall",
@@ -17,6 +18,7 @@
     "debug": "^4.3.4",
     "dogecoin-spv": "github:ShibeTechnology/dogecoin-spv-node#v0.6.1",
     "node-notifier": "^10.0.1",
+    "nodemon": "^3.1.4",
     "qrcode": "^1.5.3"
   },
   "devDependencies": {

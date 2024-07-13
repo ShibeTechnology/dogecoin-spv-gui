@@ -12,6 +12,7 @@ const Home = require('./home')
 const Send = require('./send')
 const Receive = require('./receive')
 const Settings = require('./settings')
+const Mnemonic = require('./mnemonic')
 
 // icons path
 const icon = typeof __webpack_require__ === 'function' ? "./assets/logo.png" : "../assets/logo.png"
@@ -74,12 +75,17 @@ class Win extends QMainWindow {
           case 'settings':
             views.setCurrentIndex(3)
             break
+          case 'mnemonic':
+            views.setCurrentIndex(4)
+            break
           default:
             console.log('unknown view')
         }
     })
 
     this.show()
+
+    this.viewManager = viewManager
 
     const qApp = QApplication.instance()
     qApp.setQuitOnLastWindowClosed(false) // required so that app doesnt close if we close all windows.
