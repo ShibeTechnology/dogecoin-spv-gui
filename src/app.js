@@ -15,6 +15,7 @@ const process = require('process')
 const Win = require('./win')
 const Tray = require('./tray')
 const { QApplication } = require("@nodegui/nodegui")
+const Mnemonic = require('./mnemonic')
 
 async function app (args) {
   if (typeof args.network !== 'string') {
@@ -108,18 +109,19 @@ async function app (args) {
     store.setTransactions(Array.from(transactions.values()))
   }
 
-  // Create interface with nodegui
-  const ui = new Win(store, {getAddress, sendTransaction})
-  const tray = new Tray(shutdown)
-
   // Do we have seed already ?
   try {
     fs.accessSync(SEED_FILE)
   } catch (err) {
     const mnemonic = Wallet.generateMnemonic()
+    let mnemonicScreen = new Mnemonic(mnemonic)
+    await mnemonicScreen.validateMnemonic()
     Wallet.createSeedFile(mnemonic, SEED_FILE)
-    ui.showMnemonicScreen(mnemonic)
   }
+
+  // Create interface with nodegui
+  const ui = new Win(store, {getAddress, sendTransaction})
+  const tray = new Tray(shutdown)
 
   // Create Wallet
   const wallet = new Wallet(settings)

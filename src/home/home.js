@@ -28,7 +28,7 @@ class Home extends QWidget {
         layout.setSpacing(0)
         
         this.setLayout(layout)
-        this.setStyleSheet("background-color: #131620;")
+        this.setStyleSheet('background-color: #131620;')
     }
 }
 
