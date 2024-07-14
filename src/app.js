@@ -34,6 +34,13 @@ async function app (args) {
     fs.mkdirSync(path.join(settings.DATA_FOLDER, 'wallet'))
   }
 
+  // detect if first use
+  const firstUse = !fs.existsSync(path.join(settings.DATA_FOLDER, '..', '.firstuse'))
+
+  if (firstUse) {
+    fs.writeFileSync(path.join(settings.DATA_FOLDER, '..', '.firstuse'), "")
+  }
+
   const SEED_FILE = path.join(settings.DATA_FOLDER, 'seed.json')
 
   // Will be needed in the interface
@@ -120,8 +127,19 @@ async function app (args) {
   }
 
   // Create interface with nodegui
-  const ui = new Win(store, {getAddress, sendTransaction})
-  const tray = new Tray(shutdown)
+  const ui = new Win(store, {getAddress, sendTransaction, firstUse})
+
+  const reopen = () => {
+    if (ui.isMinimized()) {
+      // if minimize we try to show it
+      ui.activateWindow()
+      return
+    }
+
+    ui.show()
+  }
+
+  const tray = new Tray(shutdown, reopen)
 
   // Create Wallet
   const wallet = new Wallet(settings)
@@ -143,8 +161,6 @@ async function app (args) {
 
   // Initiate wallet
   await wallet.init()
-  // show main screen
-  ui.showMainScreen()
 
   wallet.on('balance', function () {
     debug('BALANCE UPDATED!')

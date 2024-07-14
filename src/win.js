@@ -5,6 +5,13 @@ const {
     QMainWindow,
     QIcon,
     QStackedWidget,
+    QMessageBox,
+    QPushButton,
+    QLabel,
+    QGridLayout,
+    QWidget,
+    QPixmap,
+    AlignmentFlag,
 } = require("@nodegui/nodegui")
 
 // Screens
@@ -87,16 +94,34 @@ class Win extends QMainWindow {
 
     this.viewManager = viewManager
 
+    if (opts.firstUse) {
+      // if we are using the app for the first time we show a dialog box to inform that the app is not being really closing
+      this.addEventListener('Close', () => {
+        console.log('clicked on closed')
+
+        const messageBox = new QMessageBox()
+        messageBox.setWindowTitle('Deadbrain Wallet')
+        messageBox.setText('Clicking on the cross doesn\'t leave the app. The app will run in the background. To fully close the app you can use the system tray icon.')
+        
+        const layout = messageBox.layout()
+
+        const label = new QLabel()
+        const image = new QPixmap('./assets/close_system_tray.jpg')
+        label.setInlineStyle('margin: 20px;')
+
+        label.setPixmap(image)
+        layout.addWidget(label, 1, 0, 1, 0, AlignmentFlag.AlignHCenter)
+        
+        const button = new QPushButton()
+        button.setText('Got it')
+        messageBox.addButton(button, button.AcceptRole)
+        messageBox.exec()
+      })
+  
+    }
+
     const qApp = QApplication.instance()
     qApp.setQuitOnLastWindowClosed(false) // required so that app doesnt close if we close all windows.
-  }
-
-  showMnemonicScreen (mnemonic) {
-    console.log(mnemonic)
-  }
-
-  showMainScreen () {
-    console.log('show main screen')
   }
 }
 
