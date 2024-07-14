@@ -10,7 +10,7 @@ const path = require("path")
 const iconWhite = typeof __webpack_require__ === 'function' ? "./assets/logo_white.png" : "../assets/logo_white.png"
 
 class Tray extends QSystemTrayIcon {
-  constructor(shutdown) {
+  constructor(shutdown, reopen) {
     super()
 
     const trayIcon = new QIcon(path.resolve(__dirname, iconWhite))
@@ -27,10 +27,18 @@ class Tray extends QSystemTrayIcon {
     // -------------------
     const quitAction = new QAction()
     quitAction.setText("Quit")
-    quitAction.setIcon(trayIcon)
     quitAction.addEventListener("triggered", shutdown)
 
+    // -------------------
+    // Reopen Action
+    // -------------------
+    const reopenAction = new QAction()
+    reopenAction.setText("Open")
+    reopenAction.addEventListener("triggered", reopen)
+
+
     menu.addAction(quitAction)
+    menu.addAction(reopenAction)
 
   }
 }
