@@ -47,15 +47,29 @@ jobs:
         with:
           name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
           path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
-      - name: Create archive (zip)
+      - name: Install NSIS
         if: matrix.os =='windows-latest'
-        run: 7z a DeadbrainWallet-${{ github.ref_name }}.zip deploy\win32\build\DeadbrainWallet
+        run: |
+          iwr -useb get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop update
+          scoop bucket add extras
+          scoop install nsis
+      - name: Print NSIS version
+        if: matrix.os =='windows-latest'
+        run: makensis -VERSION
+      # - name: Create archive (zip)
+      #   if: matrix.os =='windows-latest'
+      #   run: 7z a DeadbrainWallet-${{ github.ref_name }}.zip deploy\win32\build\DeadbrainWallet
+      - name: Create installer (makensis)
+        if: matrix.os =='windows-latest'
+        run: makensis /DTAG=${{ github.ref_name }} deadbrainwallet.nsi
       - name: Upload artefact
         if: matrix.os =='windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: DeadbrainWallet-${{ github.ref_name }}.zip
-          path: DeadbrainWallet-${{ github.ref_name }}.zip
+          name: DeadbrainWallet_${{ github.ref_name }}_setup.exe
+          path: DeadbrainWallet_${{ github.ref_name }}_setup.exe
 
   release:
     name: Create release with assets
@@ -70,7 +84,7 @@ jobs:
       - name: Download artefact (win32)
         uses: actions/download-artifact@v4
         with:
-          name: DeadbrainWallet-${{ github.ref_name }}.zip
+          name: DeadbrainWallet_${{ github.ref_name }}_setup.exe
       - run: ls
       - name: Create release
         uses: softprops/action-gh-release@v2
@@ -78,6 +92,6 @@ jobs:
           name: Release ${{ github.ref_name }}
           files: |
             DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
-            DeadbrainWallet-${{ github.ref_name }}.zip
+            DeadbrainWallet_${{ github.ref_name }}_setup.exe
           draft: true
           generate_release_notes: true
