@@ -1,7 +1,7 @@
 !define ZIP2EXE_COMPRESSOR_ZLIB
 !define ZIP2EXE_INSTALLDIR "$LocalAppData\Programs\DeadbrainWallet"
 !define ZIP2EXE_NAME "Deadbrain Wallet"
-!define ZIP2EXE_OUTFILE "DeadbrainWallet_setup.exe"
+!define ZIP2EXE_OUTFILE "DeadbrainWallet_${TAG}_setup.exe"
 
 !define MUI_ICON "dist\assets\logo_white.ico"
 

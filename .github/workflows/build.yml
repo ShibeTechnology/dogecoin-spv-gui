@@ -64,12 +64,14 @@ jobs:
       - name: Create archive (zip)
         if: matrix.os =='windows-latest'
         run: makensis deadbrainwallet.nsi
+        env:
+          TAG: ${{ github.ref_name }}
       - name: Upload artefact
         if: matrix.os =='windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: DeadbrainWallet_setup.exe
-          path: DeadbrainWallet_setup.exe
+          name: DeadbrainWallet_${{ github.ref_name }}_setup.exe
+          path: DeadbrainWallet_${{ github.ref_name }}_setup.exe
 
   release:
     name: Create release with assets
@@ -92,6 +94,6 @@ jobs:
           name: Release ${{ github.ref_name }}
           files: |
             DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
-            DeadbrainWallet_setup.exe
+            DeadbrainWallet_${{ github.ref_name }}_setup.exe
           draft: true
           generate_release_notes: true
