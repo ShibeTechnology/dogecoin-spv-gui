@@ -63,7 +63,7 @@ jobs:
       #   run: 7z a DeadbrainWallet-${{ github.ref_name }}.zip deploy\win32\build\DeadbrainWallet
       - name: Create archive (zip)
         if: matrix.os =='windows-latest'
-        run: makensis deadbrainwallet.nsi
+        run: makensis /DTAG=$TAG deadbrainwallet.nsi
         env:
           TAG: ${{ github.ref_name }}
       - name: Upload artefact
