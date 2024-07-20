@@ -47,15 +47,29 @@ jobs:
         with:
           name: DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
           path: deploy/linux/build/DeadbrainWallet/DeadbrainWallet-${{ github.ref_name }}-x86_64.AppImage
+      - name: Install NSIS
+        if: matrix.os =='windows-latest'
+        run: |
+          iwr -useb get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop update
+          scoop bucket add extras
+          scoop install nsis
+      - name: Print NSIS version
+        if: matrix.os =='windows-latest'
+        run: makensis -VERSION
+      # - name: Create archive (zip)
+      #   if: matrix.os =='windows-latest'
+      #   run: 7z a DeadbrainWallet-${{ github.ref_name }}.zip deploy\win32\build\DeadbrainWallet
       - name: Create archive (zip)
         if: matrix.os =='windows-latest'
-        run: 7z a DeadbrainWallet-${{ github.ref_name }}.zip deploy\win32\build\DeadbrainWallet
+        run: makensis deadbrainwallet.nsi
       - name: Upload artefact
         if: matrix.os =='windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: DeadbrainWallet-${{ github.ref_name }}.zip
-          path: DeadbrainWallet-${{ github.ref_name }}.zip
+          name: DeadbrainWallet_setup.exe
+          path: DeadbrainWallet_setup.exe
 
   release:
     name: Create release with assets
