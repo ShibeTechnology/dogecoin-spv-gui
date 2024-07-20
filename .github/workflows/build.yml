@@ -84,7 +84,7 @@ jobs:
       - name: Download artefact (win32)
         uses: actions/download-artifact@v4
         with:
-          name: DeadbrainWallet_setup.exe
+          name: DeadbrainWallet_${{ github.ref_name }}_setup.exe
       - run: ls
       - name: Create release
         uses: softprops/action-gh-release@v2
