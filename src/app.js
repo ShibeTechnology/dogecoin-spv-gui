@@ -122,7 +122,9 @@ async function app (args) {
   } catch (err) {
     const mnemonic = Wallet.generateMnemonic()
     let mnemonicScreen = new Mnemonic(mnemonic)
-    await mnemonicScreen.validateMnemonic()
+
+    // The return value is the mnemonic that we either generated or the one we entered
+    const menmonic = await mnemonicScreen.completion()
     Wallet.createSeedFile(mnemonic, SEED_FILE)
   }
 

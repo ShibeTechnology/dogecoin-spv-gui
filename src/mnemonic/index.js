@@ -1,14 +1,15 @@
 const {
     QMainWindow,
-    QPlainTextEdit,
+    QStackedWidget,
     QIcon,
-    QPushButton,
-    QFrame,
-    QGridLayout,
-    AlignmentFlag
-    
 } = require("@nodegui/nodegui")
 const path = require("path")
+const EventEmitter = require('events')
+
+// Screens
+const MnemonicChoice = require('./choice')
+const MnemonicShow = require('./show')
+const MnemonicEnter = require('./enter')
 
 // icons path
 const icon = typeof __webpack_require__ === 'function' ? "./assets/logo.png" : "../assets/logo.png"
@@ -23,43 +24,63 @@ class Mnemonic extends QMainWindow {
         this.setWindowIcon(winIcon)
         this.setFixedSize(460, 720)
 
-        const frame = new QFrame()
-        const layout = new QGridLayout()
+        // -------------------
+        // Stacked Widget (manage views)
+        // -------------------
+        const views = new QStackedWidget()
+        const viewManager = new EventEmitter()
 
-        /* Text edit widget */
-        const plainTextEdit = new QPlainTextEdit()
-        plainTextEdit.setPlainText(mnemonic)
-        plainTextEdit.setDisabled(true)
-        plainTextEdit.setInlineStyle('margin: 180px 20px; border: none; font-size: 2em;')
+        const choice = new MnemonicChoice(viewManager)
+        const show = new MnemonicShow(viewManager, mnemonic)
+        const enter = new MnemonicEnter(viewManager)
+    
+        views.addWidget(choice)
+        views.addWidget(show)
+        views.addWidget(enter)
 
-
-        this.button = new QPushButton()
-        this.button.setText('I have saved my mnemonic')
-        this.button.setInlineStyle('padding: 5px; background-color: white; border-radius: 30%; color: #131620;')
-        this.button.setFixedSize(240, 60)
-
-        layout.addWidget(plainTextEdit, 0, 0, 1, 0, AlignmentFlag.AlignTop)
-        layout.addWidget(this.button, 1, 0, 1, 0, AlignmentFlag.AlignCenter)
-
-        // frame.setInlineStyle('border: none;')
-        frame.setInlineStyle('margin: 20px;')
-
-        frame.setLayout(layout)
-        this.setCentralWidget(frame)
-
+        views.setCurrentWidget(choice)
+    
+        this.setCentralWidget(views)
         this.setStyleSheet('background-color: #131620;')
+
+        // View Manager
+        viewManager.on('changeView', async (view) => {
+            switch (view) {
+                case 'new':
+                views.setCurrentIndex(1)
+                break
+                case 'enter':
+                views.setCurrentIndex(2)
+                break
+                default:
+                console.log('unknown view')
+            }
+        })
+
+        // -------------------
+        // Event manager for completion
+        // -------------------
+        this.viewManager = viewManager
 
         this.show()
     }
 
-    async validateMnemonic () {
+    async completion () {
         return new Promise((resolve, reject) => {
-            this.button.addEventListener('clicked', () => {
+            this.viewManager.on('completed', (mnemonic) => {
                 // close the mnemonic window
                 this.close()
-                resolve()
-            })
 
+                console.log("completed")
+
+                // We return the menmonic in case we have entered one
+                resolve(mnemonic)
+            })
+            this.viewManager.on('failed', () => {
+                // close the mnemonic window
+                this.close()
+                reject()
+            })
         })
     }
 }
