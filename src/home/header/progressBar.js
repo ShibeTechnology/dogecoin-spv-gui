@@ -21,7 +21,6 @@ class ProgressBar extends QWidget {
 
         // progress bar widget
         this.progressBar = new QProgressBar()
-        // border-radius has to be half the height to work 
         this.progressBar.setStyleSheet(`
         QProgressBar {
             margin-top: 10px;
@@ -29,12 +28,11 @@ class ProgressBar extends QWidget {
             margin-right: 80px;
             border-radius: 4px;
             background: white;
-            height: 8px;
+            height: 12px;
         }
         QProgressBar::chunk {
             background-color: #ffe199;
             border-radius: 4px;
-            height: 8px;
         }`)
 
         this.progressBar.setTextVisible(false)
@@ -48,6 +46,7 @@ class ProgressBar extends QWidget {
     }
 
     setProgress (sync) {
+        console.debug(sync)
         // TODO: can we import enum states here ? but we want to avoid mixing spv node specific code
         switch (sync.state) {
             case 'init':

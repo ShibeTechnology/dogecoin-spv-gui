@@ -33,7 +33,7 @@ class Nav extends QWidget {
         layout.addStretch()
         layout.addWidget(label)
         layout.addStretch()
-        layout.addWidget(buttonMoon)
+        // layout.addWidget(buttonMoon)
         
         this.setLayout(layout)
     }
