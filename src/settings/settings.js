@@ -14,10 +14,10 @@ class Settings extends View {
 
         const layout = new QBoxLayout(Direction.TopToBottom)
         const buttonBack = new BackButton(viewManager)
-        const nav = new Nav(buttonBack, 'Send DOGE')
+        const nav = new Nav(buttonBack, 'Settings')
         const label = new QLabel()
         
-        label.setText('Settings (todo)')
+        label.setText('There is no settings yet.')
         label.setAlignment(AlignmentFlag.AlignCenter)
 
         layout.addWidget(nav, 0, AlignmentFlag.AlignTop)
